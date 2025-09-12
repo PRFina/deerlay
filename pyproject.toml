@@ -9,6 +9,8 @@ authors = [
 requires-python = ">=3.10"
 dependencies = [
     "pandas>=2.0",
+    "pytest~=7.0",
+    "pytest-cov>=7.0.0",
 ]
 
 [build-system]
@@ -18,4 +20,114 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
     "ipykernel>=6.30.1",
+    "pre-commit>=4.3.0",
+    "ruff>=0.13.0",
+]
+doc = [
+    "mkdocs>=1.6.1",
+    "mkdocs-gen-files>=0.5.0",
+    "mkdocs-material>=9.6.19",
+    "mkdocstrings[python]>=0.30.0",
+    "pymdown-extensions>=10.16.1",
+]
+
+
+
+[tool.ruff]
+# Python version target
+target-version = "py310"
+
+# Line length (slightly longer than default for flexibility)
+line-length = 100
+
+# Enable auto-fixing for specific rule categories
+fix = true
+show-fixes = true
+
+[tool.ruff.lint]
+# Rule categories to enable
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort (import sorting)
+    "UP",   # pyupgrade (modernize Python code)
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "PIE",  # flake8-pie (misc improvements)
+    "SIM",  # flake8-simplify
+    "RUF",  # Ruff-specific rules
+]
+
+
+[tool.ruff.lint.per-file-ignores]
+# Test files can be more flexible
+"tests/**/*.py" = [
+    "S101",   # Use of assert
+    "PLR2004", # Magic value comparison
+    "SLF001",  # Private member access
+]
+
+
+[tool.ruff.lint.isort]
+# Import sorting configuration
+known-first-party = ["deerlay"]
+force-sort-within-sections = true
+split-on-trailing-comma = true
+
+[tool.ruff.lint.pyupgrade]
+# Keep some compatibility with older Python versions
+keep-runtime-typing = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=src/deerlay",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-report=xml",
+    "--cov-fail-under=0",
+    "-ra",                      # show short test summary for all outcomes
+    "--tb=short",              # shorter traceback format
+]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["src"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+    "*/__pycache__/*",
+    "*/.venv/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
 ]
