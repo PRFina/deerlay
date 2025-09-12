@@ -160,7 +160,7 @@ wheels = [
 ]
 
 [[package]]
-name = "dirlayout"
+name = "deerlay"
 version = "0.0.0"
 source = { editable = "." }
 dependencies = [

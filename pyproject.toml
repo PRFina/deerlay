@@ -1,5 +1,5 @@
 [project]
-name = "dirlayout"
+name = "deerlay"
 version = "0.0.0"
 description = "Tiny package to discover and parse files from different directory layouts"
 readme = "README.md"
