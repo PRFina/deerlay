@@ -115,7 +115,7 @@ class FlatLayout(DirectoryLayout):
         self._pattern = re.compile(rf"([^{field_delimiter}]+)")
 
     def discover(self) -> Generator[Path, None, None]:
-        yield from self.root_dir.glob(self._discover_pattern)
+        yield from sorted(self.root_dir.glob(self._discover_pattern))
 
     def parse(self, filepath: Path) -> FileEntry:
         filepath = filepath.relative_to(self.root_dir)
@@ -139,7 +139,7 @@ class NamedFlatLayout(DirectoryLayout):
         )
 
     def discover(self) -> Generator[Path, None, None]:
-        yield from self.root_dir.glob(self._discover_pattern)
+        yield from sorted(self.root_dir.glob(self._discover_pattern))
 
     def parse(self, filepath: Path) -> FileEntry:
         filepath = filepath.relative_to(self.root_dir)
@@ -164,9 +164,10 @@ class HierarchicalLayout(DirectoryLayout):
         self._pattern = re.compile(rf"([^{self.field_delimiter}]+)")
 
     def discover(self) -> Generator[Path, None, None]:
-        for dirpath, _, filenames in os.walk(self.root_dir):
+        for dirpath, dirnames, filenames in os.walk(self.root_dir, topdown=True):
+            dirnames.sort()  # sort to ensure consistent order
             if filenames:
-                for filename in filenames:
+                for filename in sorted(filenames):  # sort to ensure consistent order
                     filepath = Path(dirpath) / filename
                     yield filepath
 
@@ -187,9 +188,10 @@ class NamedHierarchicalLayout(DirectoryLayout):
         self.keyval_separator = field_name_delimiter
 
     def discover(self) -> Generator[Path, None, None]:
-        for dirpath, _, filenames in os.walk(self.root_dir):
+        for dirpath, dirnames, filenames in os.walk(self.root_dir, topdown=True):
+            dirnames.sort()  # sort to ensure consistent order
             if filenames:
-                for filename in filenames:
+                for filename in sorted(filenames):  # sort to ensure consistent order
                     filepath = Path(dirpath) / filename
                     yield filepath
 
