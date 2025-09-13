@@ -43,7 +43,7 @@ class DirectoryLayout(ABC):
             yield filepath, metadata
 
     @abstractmethod
-    def discover(self, filepath: Path) -> Generator[Path, None, None]:
+    def discover(self) -> Generator[Path, None, None]:
         pass
 
     @abstractmethod
