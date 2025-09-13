@@ -39,8 +39,8 @@ class DirectoryLayout(ABC):
     def collect(self) -> Generator[FileEntry, None, None]:
         for filepath in self.discover():
             filepath, metadata = self.parse(filepath)
-
-            yield filepath, metadata
+            full_filepath = self.get_fullpath(filepath)
+            yield full_filepath, metadata
 
     @abstractmethod
     def discover(self) -> Generator[Path, None, None]:
