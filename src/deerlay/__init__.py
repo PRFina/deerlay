@@ -3,8 +3,20 @@ from collections.abc import Generator, Iterable
 import os
 from pathlib import Path
 import re
+from typing import Literal
 
 import pandas as pd
+
+from .callbacks import (
+    Augmenter,
+    MetaSelector,
+    PathSelector,
+    apply_augmenters,
+    apply_selectors,
+    noop_augmenter,
+    noop_metadata_selector,
+    noop_path_selector,
+)
 
 FileEntry = tuple[Path, dict[str, str]]
 FileEntries = Iterable[FileEntry]
@@ -36,11 +48,31 @@ class DirectoryLayout(ABC):
         if not self.root_dir.exists():
             raise FileNotFoundError(f"Root directory '{self.root_dir}' does not exist.")
 
-    def collect(self) -> Generator[FileEntry, None, None]:
+    def collect(
+        self,
+        path_selector: PathSelector | Iterable[PathSelector] = None,
+        metadata_selector: MetaSelector | Iterable[MetaSelector] = None,
+        augmenter: Augmenter | Iterable[Augmenter] = None,
+        select_mode: Literal["all", "any"] = "all",
+    ) -> Generator[FileEntry, None, None]:
+        if select_mode not in ("all", "any"):
+            raise ValueError("select_mode must be either 'all' or 'any'")
+        reducer = all if select_mode == "all" else any
+
+        # if given use them, otherwise use no-op function
+        path_selector = path_selector or noop_path_selector
+        metadata_selector = metadata_selector or noop_metadata_selector
+        augmenter = augmenter or noop_augmenter
+
+        # collection loop
         for filepath in self.discover():
-            filepath, metadata = self.parse(filepath)
-            full_filepath = self.get_fullpath(filepath)
-            yield full_filepath, metadata
+            if apply_selectors(filepath, path_selector, reducer):
+                filepath, metadata = self.parse(filepath)
+                if apply_selectors(metadata, metadata_selector, reducer):
+                    full_filepath = self.get_fullpath(filepath)
+                    metadata = apply_augmenters(full_filepath, metadata, augmenter)
+
+                    yield full_filepath, metadata
 
     @abstractmethod
     def discover(self) -> Generator[Path, None, None]:
