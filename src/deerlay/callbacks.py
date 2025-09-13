@@ -50,3 +50,26 @@ def add_file_stats(filepath, metadata, time_format="%Y-%m-%dT%H:%M:%S"):
     metadata["file_last_change"] = datetime.fromtimestamp(stats.st_ctime).strftime(time_format)
 
     return metadata
+
+
+def file_extension_selector(filepath: Path, extensions: Iterable[str]) -> bool:
+    """
+    Check if the file extension of the given filepath matches any of the specified extensions.
+
+    Notes:
+        - File extensions must be prefixed with a ".", e.g., use ".txt" instead of "txt".
+        - Matching is performed on the entire extension as whole,
+        not its subparts (use {".tar.gz"} instead of {".tar", ".gz"}).
+        - Matching is case-sensitive. To ensure robustness, include both
+        lowercase and uppercase variations (e.g., {".png", ".PNG"}).
+
+
+    Args:
+        filepath (Path): The path of the file to check.
+        extensions (Iterable[str]): A collection of file extensions to match against.
+
+    Returns:
+        bool: True if the file's extension matches **any** of the specified extensions,
+        False otherwise.
+    """
+    return "".join(filepath.suffixes) in extensions
