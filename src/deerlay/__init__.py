@@ -5,8 +5,6 @@ from pathlib import Path
 import re
 from typing import Literal
 
-import pandas as pd
-
 from .callbacks import (
     Augmenter,
     MetaSelector,
@@ -85,23 +83,6 @@ class DirectoryLayout(ABC):
     def get_fullpath(self, filename, as_absolute=False) -> Path:
         filepath = self.root_dir / filename
         return filepath.absolute() if as_absolute else filepath
-
-    def build_index_table(
-        self,
-        entries: FileEntries,
-        index_fields: str | list[str] | None = None,
-        add_filepath: bool = False,
-    ):
-        if add_filepath:
-            record_generator = (
-                entry[1] | {"filepath": str(self.get_fullpath(entry[0]))} for entry in entries
-            )
-        else:
-            record_generator = (entry[1] for entry in entries)
-
-        index = pd.DataFrame.from_records(record_generator, index=index_fields)
-
-        return index
 
 
 class FlatLayout(DirectoryLayout):
