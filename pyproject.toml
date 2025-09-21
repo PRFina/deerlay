@@ -8,9 +8,15 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "pandas>=2.0",
     "pytest~=7.0",
     "pytest-cov>=7.0.0",
+]
+
+[project.optional-dependencies]
+tabular = []
+
+flat = [
+    "pandas>=2.0",
 ]
 
 [build-system]
@@ -25,6 +31,7 @@ dev = [
     "ruff>=0.13.0",
 ]
 doc = [
+    "markdown-exec>=1.11.0",
     "mkdocs>=1.6.1",
     "mkdocs-gen-files>=0.5.0",
     "mkdocs-material>=9.6.19",

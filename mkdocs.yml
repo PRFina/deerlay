@@ -1,4 +1,4 @@
-site_name: deerlay
+site_name: Deerlay
 site_url: https://your-username.github.io/your-project/
 repo_url: https://github.com/PRFina/deerlay
 
@@ -6,6 +6,7 @@ theme:
   name: material
   features:
     - content.code.copy
+    - content.code.annotate
     - navigation.sections
     - search.suggest
     - search.highlight
@@ -15,12 +16,25 @@ markdown_extensions:
       permalink: true
   - pymdownx.highlight:
       anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.inlinehilite
+  - attr_list
+  - md_in_html
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
   - pymdownx.snippets
+  - admonition
+  - pymdownx.details
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
 
 plugins:
   - search
+  - markdown-exec
   - gen-files:
       scripts:
         - docs/gen_ref_pages.py
@@ -34,6 +48,10 @@ plugins:
 
 nav:
   - Home: index.md
+  - User Guide:
+      - Installation: guide/install.md
+      - Concepts: guide/concepts.md
+      - Extending deerlay: guide/extending.md
   - API Reference: reference/deerlay/index.md
 
 watch:
